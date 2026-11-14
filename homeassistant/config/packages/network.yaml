@@ -1,0 +1,73 @@
+# DNS filtering control (AdGuard Home). Added 2026-11-13.
+# Used by the "Network" dashboard (dashboards/network.yaml).
+#  - switch.adguard_home_protection is the plain on/off.
+#  - script.adguard_pause_filtering turns it off for input_number.adguard_pause_minutes minutes.
+#  - timer.adguard_pause restores across HA restarts and re-enables filtering when it ends.
+
+input_number:
+  adguard_pause_minutes:
+    name: Pause length (minutes)
+    min: 1
+    max: 240
+    step: 1
+    initial: 15
+    unit_of_measurement: min
+    icon: mdi:timer-cog-outline
+
+timer:
+  adguard_pause:
+    name: DNS filtering pause
+    icon: mdi:shield-off-outline
+    restore: true
+
+script:
+  adguard_pause_filtering:
+    alias: Pause DNS filtering
+    icon: mdi:shield-off-outline
+    mode: restart
+    sequence:
+      - action: switch.turn_off
+        target:
+          entity_id: switch.adguard_home_protection
+      - action: timer.start
+        target:
+          entity_id: timer.adguard_pause
+        data:
+          duration: "{{ (states(\"input_number.adguard_pause_minutes\") | float(15) * 60) | int }}"
+  adguard_resume_filtering:
+    alias: Resume DNS filtering
+    icon: mdi:shield-check
+    sequence:
+      - action: timer.cancel
+        target:
+          entity_id: timer.adguard_pause
+      - action: switch.turn_on
+        target:
+          entity_id: switch.adguard_home_protection
+
+automation:
+  - id: adguard_pause_finished
+    alias: DNS filtering - resume when pause ends
+    triggers:
+      - trigger: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.adguard_pause
+    actions:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.adguard_home_protection
+  - id: adguard_pause_cleared
+    alias: DNS filtering - clear pause when filtering is turned back on
+    triggers:
+      - trigger: state
+        entity_id: switch.adguard_home_protection
+        to: "on"
+    conditions:
+      - condition: state
+        entity_id: timer.adguard_pause
+        state: active
+    actions:
+      - action: timer.cancel
+        target:
+          entity_id: timer.adguard_pause

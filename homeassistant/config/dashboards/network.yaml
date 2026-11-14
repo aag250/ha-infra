@@ -1,0 +1,150 @@
+title: Network
+views:
+  - title: DNS filtering
+    path: dns
+    icon: mdi:shield-check
+    type: sections
+    max_columns: 2
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: DNS filtering
+            icon: mdi:dns
+          - type: tile
+            entity: switch.adguard_home_protection
+            name: DNS filtering
+            icon: mdi:shield-check
+            features:
+              - type: toggle
+            tap_action:
+              action: toggle
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: timer.adguard_pause
+                state: active
+            card:
+              type: tile
+              entity: timer.adguard_pause
+              name: Filtering resumes in
+              icon: mdi:timer-sand
+      - type: grid
+        cards:
+          - type: heading
+            heading: Turn off for a while
+            icon: mdi:timer-outline
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_number.adguard_pause_minutes
+                name: Minutes
+          - type: button
+            name: Turn off for the time above
+            icon: mdi:shield-off-outline
+            show_state: false
+            tap_action:
+              action: perform-action
+              perform_action: script.adguard_pause_filtering
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: timer.adguard_pause
+                state: active
+            card:
+              type: button
+              name: Turn back on now
+              icon: mdi:shield-check
+              show_state: false
+              tap_action:
+                action: perform-action
+                perform_action: script.adguard_resume_filtering
+      - type: grid
+        cards:
+          - type: heading
+            heading: Today
+            icon: mdi:chart-box-outline
+          - type: tile
+            entity: sensor.adguard_home_dns_queries
+            name: DNS queries
+          - type: tile
+            entity: sensor.adguard_home_dns_queries_blocked
+            name: Blocked
+          - type: tile
+            entity: sensor.adguard_home_dns_queries_blocked_ratio
+            name: Blocked %
+  - title: Kids network
+    path: kids
+    icon: mdi:account-child
+    type: sections
+    max_columns: 2
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Kids restrictions
+            icon: mdi:shield-account
+          - type: tile
+            entity: switch.kids_restrictions
+            name: Kids restrictions
+            features:
+              - type: toggle
+            tap_action:
+              action: toggle
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: timer.kids_restrictions_pause
+                state: active
+            card:
+              type: tile
+              entity: timer.kids_restrictions_pause
+              name: Restrictions resume in
+              icon: mdi:timer-sand
+      - type: grid
+        cards:
+          - type: heading
+            heading: Turn restrictions off for a while
+            icon: mdi:timer-outline
+          - type: entities
+            show_header_toggle: false
+            entities:
+              - entity: input_number.kids_pause_minutes
+                name: Minutes
+          - type: button
+            name: Turn off for the time above
+            icon: mdi:shield-off-outline
+            show_state: false
+            tap_action:
+              action: perform-action
+              perform_action: script.kids_pause_restrictions
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: timer.kids_restrictions_pause
+                state: active
+            card:
+              type: button
+              name: Turn back on now
+              icon: mdi:shield-check
+              show_state: false
+              tap_action:
+                action: perform-action
+                perform_action: script.kids_resume_restrictions
+      - type: grid
+        cards:
+          - type: heading
+            heading: Kids internet
+            icon: mdi:wifi
+          - type: tile
+            entity: switch.kids_internet
+            name: Kids internet
+            features:
+              - type: toggle
+            tap_action:
+              action: toggle
+            hide_state: false
+          - type: markdown
+            content: >-
+              Turning this off makes AdGuard refuse all DNS lookups from the Kids
+              network, so nothing loads. Devices stay connected to the Wi-Fi.

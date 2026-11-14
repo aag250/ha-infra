@@ -1,0 +1,13 @@
+# Never commit secrets or backups
+.env
+*.env
+!*.env.example
+secrets.yaml
+secrets.yaml.*
+.adguard-cred
+*.unf
+*.db
+*.db-*
+*.bak*
+backups/
+.storage/
