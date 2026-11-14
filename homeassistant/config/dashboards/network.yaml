@@ -148,3 +148,17 @@ views:
             content: >-
               Turning this off makes AdGuard refuse all DNS lookups from the Kids
               network, so nothing loads. Devices stay connected to the Wi-Fi.
+          - type: heading
+            heading: Kids Wi-Fi
+            icon: mdi:wifi-off
+          - type: tile
+            entity: switch.kids_enabled
+            name: Kids Wi-Fi network
+            features:
+              - type: toggle
+            tap_action:
+              action: toggle
+          - type: markdown
+            content: >-
+              Turning this off switches the Kids Wi-Fi network off on both access
+              points, so devices disconnect and cannot rejoin until it is back on.
