@@ -33,7 +33,7 @@ lovelace:
       title: Network
       icon: mdi:lan
       show_in_sidebar: true
-      require_admin: false
+      require_admin: true
       filename: dashboards/network.yaml
 ```
 
